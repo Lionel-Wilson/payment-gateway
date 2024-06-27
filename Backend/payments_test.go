@@ -14,13 +14,13 @@ func TestProcessPayment(t *testing.T) {
 
 	// Create a valid payment request
 	paymentRequest := ProccessPaymentRequest{
-		FirstName:  "John",
-		LastName:   "Doe",
-		CardNumber: "4658587360641032",
-		ExpiryDate: "12/24",
-		Amount:     100.0,
-		Currency:   "USD",
-		CVV:        "123",
+		FirstName:    "John",
+		LastName:     "Doe",
+		CardNumber:   "4658587360641032",
+		ExpiryDate:   "12/24",
+		Amount:       100.0,
+		CurrencyCode: "USD",
+		CVV:          "123",
 	}
 	requestBody, err := json.Marshal(paymentRequest)
 	if err != nil {
@@ -64,15 +64,15 @@ func TestRetrievePaymentDetails(t *testing.T) {
 	// Simulate storing a payment
 	id := "PAY-12345"
 	payments[id] = PaymentDetails{
-		ID:         id,
-		FirstName:  "Jane",
-		LastName:   "Doe",
-		CardNumber: maskCardNumber("4111111111111111"),
-		ExpiryDate: "12/24",
-		Amount:     200.0,
-		Currency:   "USD",
-		Status:     "payment_paid",
-		StatusCode: 10000,
+		ID:           id,
+		FirstName:    "Jane",
+		LastName:     "Doe",
+		CardNumber:   maskCardNumber("4111111111111111"),
+		ExpiryDate:   "12/24",
+		Amount:       200.0,
+		CurrencyCode: "USD",
+		Status:       "payment_paid",
+		StatusCode:   10000,
 	}
 
 	// Create a new HTTP request to retrieve payment details
@@ -119,8 +119,8 @@ func TestRetrievePaymentDetails(t *testing.T) {
 	if response.Amount != 200.0 {
 		t.Errorf("expected Amount to be 200.0, got %v", response.Amount)
 	}
-	if response.Currency != "USD" {
-		t.Errorf("expected Currency to be 'USD', got %v", response.Currency)
+	if response.CurrencyCode != "USD" {
+		t.Errorf("expected Currency Code to be 'USD', got %v", response.CurrencyCode)
 	}
 	if response.Status != "payment_paid" {
 		t.Errorf("expected Status to be 'payment_paid', got %v", response.Status)
@@ -135,11 +135,11 @@ func TestProcessInvalidPayment(t *testing.T) {
 
 	// Create an invalid payment request (e.g., missing required fields)
 	invalidPaymentRequest := ProccessPaymentRequest{
-		FirstName:  "John",
-		CardNumber: "4111111111111111",
-		Amount:     -100.0, // Invalid amount
-		Currency:   "USD",
-		CVV:        "123",
+		FirstName:    "John",
+		CardNumber:   "4111111111111111",
+		Amount:       -100.0, // Invalid amount
+		CurrencyCode: "USD",
+		CVV:          "123",
 	}
 	requestBody, err := json.Marshal(invalidPaymentRequest)
 	if err != nil {
@@ -165,9 +165,33 @@ func TestProcessInvalidPayment(t *testing.T) {
 	}
 
 	// Check the response body for error message
-	expectedError := "Field validation for 'Amount' failed on the 'gt' tag"
-	if !strings.Contains(rr.Body.String(), expectedError) {
-		t.Errorf("expected error message to contain '%v', got %v", expectedError, rr.Body.String())
+	expectedErrors := []string{
+		"LastName is required",
+		"ExpiryDate is required",
+		"Amount must be greater than 0",
+	}
+	var responseBody map[string][]string
+	err = json.Unmarshal(rr.Body.Bytes(), &responseBody)
+	if err != nil {
+		t.Fatalf("failed to unmarshal response body: %v", err)
+	}
+
+	errors, ok := responseBody["errors"]
+	if !ok {
+		t.Fatalf("response body does not contain error key")
+	}
+
+	for _, expectedError := range expectedErrors {
+		found := false
+		for _, err := range errors {
+			if strings.Contains(err, expectedError) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("expected error message to contain '%v', got %v", expectedError, errors)
+		}
 	}
 }
 

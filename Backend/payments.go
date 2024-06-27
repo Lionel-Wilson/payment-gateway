@@ -14,13 +14,13 @@ import (
 )
 
 type ProccessPaymentRequest struct {
-	FirstName  string  `json:"firstName" validate:"required,alpha"`
-	LastName   string  `json:"lastName" validate:"required,alpha"`
-	CardNumber string  `json:"cardNumber" validate:"required,credit_card"`
-	ExpiryDate string  `json:"expiryDate" validate:"required,expirydate"` // Custom validation to ensure it matches "MM/YY" format
-	Amount     float64 `json:"amount" validate:"required,gt=0"`
-	Currency   string  `json:"currency" validate:"required,len=3,alpha"`
-	CVV        string  `json:"cvv" validate:"required,len=3,numeric"`
+	FirstName    string  `json:"firstName" validate:"required,alpha"`
+	LastName     string  `json:"lastName" validate:"required,alpha"`
+	CardNumber   string  `json:"cardNumber" validate:"required,credit_card"`
+	ExpiryDate   string  `json:"expiryDate" validate:"required,expirydate"` // Custom validation to ensure it matches "MM/YY" format
+	Amount       float64 `json:"amount" validate:"required,gt=0"`
+	CurrencyCode string  `json:"currencyCode" validate:"required,len=3,alpha"`
+	CVV          string  `json:"cvv" validate:"required,len=3,numeric"`
 }
 
 type ProccessPaymentResponse struct {
@@ -30,15 +30,15 @@ type ProccessPaymentResponse struct {
 }
 
 type PaymentDetails struct {
-	ID         string  `json:"id"`
-	FirstName  string  `json:"firstName"`
-	LastName   string  `json:"lastName"`
-	CardNumber string  `json:"cardNumber"`
-	ExpiryDate string  `json:"expiryDate"`
-	Amount     float64 `json:"amount"`
-	Currency   string  `json:"currency"`
-	Status     string  `json:"status"`
-	StatusCode int     `json:"statusCode"`
+	ID           string  `json:"id"`
+	FirstName    string  `json:"firstName"`
+	LastName     string  `json:"lastName"`
+	CardNumber   string  `json:"cardNumber"`
+	ExpiryDate   string  `json:"expiryDate"`
+	Amount       float64 `json:"amount"`
+	CurrencyCode string  `json:"currencyCode"`
+	Status       string  `json:"status"`
+	StatusCode   int     `json:"statusCode"`
 }
 
 var validate *validator.Validate
@@ -65,7 +65,12 @@ func (app *application) proccessPayment(w http.ResponseWriter, r *http.Request) 
 
 	err = validate.Struct(paymentDetails)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+		errMsg := translateValidationErrors(err)
+		resp := map[string]interface{}{"errors": errMsg}
+		jsonResponse, _ := json.Marshal(resp)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.Write(jsonResponse)
 		return
 	}
 
@@ -73,15 +78,15 @@ func (app *application) proccessPayment(w http.ResponseWriter, r *http.Request) 
 
 	mu.Lock()
 	payments[id] = PaymentDetails{
-		ID:         id,
-		FirstName:  paymentDetails.FirstName,
-		LastName:   paymentDetails.LastName,
-		CardNumber: maskCardNumber(paymentDetails.CardNumber),
-		ExpiryDate: paymentDetails.ExpiryDate,
-		Amount:     paymentDetails.Amount,
-		Currency:   paymentDetails.Currency,
-		Status:     status,
-		StatusCode: statusCode,
+		ID:           id,
+		FirstName:    paymentDetails.FirstName,
+		LastName:     paymentDetails.LastName,
+		CardNumber:   maskCardNumber(paymentDetails.CardNumber),
+		ExpiryDate:   paymentDetails.ExpiryDate,
+		Amount:       paymentDetails.Amount,
+		CurrencyCode: paymentDetails.CurrencyCode,
+		Status:       status,
+		StatusCode:   statusCode,
 	}
 	mu.Unlock()
 
@@ -97,10 +102,10 @@ func (app *application) proccessPayment(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(http.StatusPaymentRequired)
 	}
 
-	var jsonResponse []byte
-	jsonResponse, err = json.Marshal(response)
+	jsonResponse, err := json.Marshal(response)
 	if err != nil {
 		app.serverError(w, err)
+		return
 	}
 
 	w.Write(jsonResponse)
@@ -122,12 +127,13 @@ func (app *application) retrievePaymentDetails(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	var jsonResponse []byte
 	jsonResponse, err := json.Marshal(payment)
 	if err != nil {
 		app.serverError(w, err)
+		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonResponse)
 }
 
@@ -157,4 +163,35 @@ func simulateBank(amount float64) (string, string, int, string) {
 
 func maskCardNumber(cardNumber string) string {
 	return strings.Repeat("*", len(cardNumber)-4) + cardNumber[len(cardNumber)-4:]
+}
+
+func translateValidationErrors(err error) []string {
+	var errMsg []string
+
+	for _, err := range err.(validator.ValidationErrors) {
+		errMsg = append(errMsg, fmt.Sprintf("%s %s", err.Field(), getValidationErrorMessage(err)))
+	}
+
+	return errMsg
+}
+
+func getValidationErrorMessage(err validator.FieldError) string {
+	switch err.Tag() {
+	case "required":
+		return "is required"
+	case "alpha":
+		return "must only contain alphabetic characters"
+	case "credit_card":
+		return "must be a valid credit card number"
+	case "expirydate":
+		return "must be in MM/YY format"
+	case "gt":
+		return fmt.Sprintf("must be greater than %s", err.Param())
+	case "len":
+		return fmt.Sprintf("must be exactly %s characters", err.Param())
+	case "numeric":
+		return "must be numeric"
+	default:
+		return "is invalid"
+	}
 }
