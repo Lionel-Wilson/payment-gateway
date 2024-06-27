@@ -40,7 +40,7 @@ docker run --publish 8080:8080 payment-gateway
     "cardNumber": "4111111111111111",
     "expiryDate": "12/24",
     "amount": 100.5,
-    "currency": "USD",
+    "currencyCode": "USD",
     "cvv": "123"
   }
   ```
@@ -95,7 +95,7 @@ docker run --publish 8080:8080 payment-gateway
     "cardNumber": "************1111",
     "expiryDate": "12/24",
     "amount": 100.5,
-    "currency": "USD",
+    "currencyCode": "USD",
     "status": "payment_paid",
     "statusCode": 10000
   }
