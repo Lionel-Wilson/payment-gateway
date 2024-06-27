@@ -71,7 +71,7 @@ docker run --publish 8080:8080 payment-gateway
 
   ```json
   {
-    "error": "Validation failed: <details>"
+    "errors": ["CurrencyCode is required", "CVV must be exactly 3 characters"]
   }
   ```
 
