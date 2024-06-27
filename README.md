@@ -111,7 +111,7 @@ docker run --publish 8080:8080 payment-gateway
 
 ## Project Status
 
-Project is: _In Progress_
+Project is: _Complete_
 
 ## Areas for improvement
 
