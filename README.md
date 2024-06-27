@@ -9,7 +9,7 @@
 
 ### Step-by-Step Instructions
 
-1. Clone the repository from https://github.com/processout-hiring/payment-gateway-Lionel-Wilson
+1. Clone the repository from https://github.com/Lionel-Wilson/payment-gateway
 2. Open a terminal and cd into the 'Backend' folder
 3. Run the following command to create a Docker image named payment-gateway:
 
