@@ -77,11 +77,11 @@ docker run --publish 8080:8080 payment-gateway
 
 ### 2. Retrieve Payment Details
 
-- **Endpoint**: `/payments/{id}`
+- **Endpoint**: `/payments`
 - **Method**: `GET`
 - **Description**: Retrieves the details of a previously made payment using its identifier..
-- **Request Parameters**: Retrieves the details of a previously made payment using its identifier..
-  - **Path Parameter**: id (string) - The unique identifier of the payment.
+- **Query Parameters**: Retrieves the details of a previously made payment using its identifier..
+  - **id (string)**: The unique identifier of the payment.
 
 #### Responses
 
