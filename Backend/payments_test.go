@@ -76,7 +76,7 @@ func TestRetrievePaymentDetails(t *testing.T) {
 	}
 
 	// Create a new HTTP request to retrieve payment details
-	req, err := http.NewRequest("GET", "/retrieve-payment?id=PAY-12345", nil)
+	req, err := http.NewRequest("GET", "/payments/PAY-12345", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -85,13 +85,12 @@ func TestRetrievePaymentDetails(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	// Call the handler
-	handler := http.HandlerFunc(app.retrievePaymentDetails)
+	handler := http.HandlerFunc(app.retrievePayment)
 	handler.ServeHTTP(rr, req)
 
 	// Check the status code
 	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
 	}
 
 	// Check the response body
@@ -199,7 +198,7 @@ func TestRetrieveNonExistentPaymentDetails(t *testing.T) {
 	app := &application{}
 
 	// Create a new HTTP request to retrieve payment details with a non-existent ID
-	req, err := http.NewRequest("GET", "/retrieve-payment?id=PAY-99999", nil)
+	req, err := http.NewRequest("GET", "/payments/PAY-99999", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -208,7 +207,7 @@ func TestRetrieveNonExistentPaymentDetails(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	// Call the handler
-	handler := http.HandlerFunc(app.retrievePaymentDetails)
+	handler := http.HandlerFunc(app.retrievePayment)
 	handler.ServeHTTP(rr, req)
 
 	// Check the status code
@@ -220,5 +219,131 @@ func TestRetrieveNonExistentPaymentDetails(t *testing.T) {
 	expectedError := "Payment not found"
 	if !strings.Contains(rr.Body.String(), expectedError) {
 		t.Errorf("expected error message to contain '%v', got %v", expectedError, rr.Body.String())
+	}
+}
+
+func TestAllPaymentsNoPayments(t *testing.T) {
+	app := &application{}
+
+	// Clear the payments map to simulate no payments
+	mu.Lock()
+	payments = make(map[string]PaymentDetails)
+	mu.Unlock()
+
+	// Create a new HTTP request
+	req, err := http.NewRequest("GET", "/payments", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a new HTTP response recorder to record the response
+	rr := httptest.NewRecorder()
+
+	// Call the handler
+	handler := http.HandlerFunc(app.allPayments)
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code
+	if status := rr.Code; status != http.StatusNotFound {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
+	}
+
+	// Check the response body for error message
+	expectedError := "No payments available"
+	if !strings.Contains(rr.Body.String(), expectedError) {
+		t.Errorf("expected error message to contain '%v', got %v", expectedError, rr.Body.String())
+	}
+}
+
+func TestAllPaymentsWithPayments(t *testing.T) {
+	app := &application{}
+
+	// Add some payments to the payments map
+	mu.Lock()
+	payments["PAY-12345"] = PaymentDetails{
+		ID:           "PAY-12345",
+		FirstName:    "Jane",
+		LastName:     "Doe",
+		CardNumber:   maskCardNumber("4111111111111111"),
+		ExpiryDate:   "12/24",
+		Amount:       200.0,
+		CurrencyCode: "USD",
+		Status:       "payment_paid",
+		StatusCode:   10000,
+	}
+	payments["PAY-67890"] = PaymentDetails{
+		ID:           "PAY-67890",
+		FirstName:    "John",
+		LastName:     "Smith",
+		CardNumber:   maskCardNumber("4222222222222222"),
+		ExpiryDate:   "11/23",
+		Amount:       150.0,
+		CurrencyCode: "EUR",
+		Status:       "payment_paid",
+		StatusCode:   10000,
+	}
+	mu.Unlock()
+
+	// Create a new HTTP request
+	req, err := http.NewRequest("GET", "/payments", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a new HTTP response recorder to record the response
+	rr := httptest.NewRecorder()
+
+	// Call the handler
+	handler := http.HandlerFunc(app.allPayments)
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	// Check the response body
+	var response []PaymentDetails
+	err = json.Unmarshal(rr.Body.Bytes(), &response)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Verify the payments
+	if len(response) != 2 {
+		t.Errorf("expected 2 payments, got %v", len(response))
+	}
+	expectedPayments := map[string]PaymentDetails{
+		"PAY-12345": {
+			ID:           "PAY-12345",
+			FirstName:    "Jane",
+			LastName:     "Doe",
+			CardNumber:   maskCardNumber("4111111111111111"),
+			ExpiryDate:   "12/24",
+			Amount:       200.0,
+			CurrencyCode: "USD",
+			Status:       "payment_paid",
+			StatusCode:   10000,
+		},
+		"PAY-67890": {
+			ID:           "PAY-67890",
+			FirstName:    "John",
+			LastName:     "Smith",
+			CardNumber:   maskCardNumber("4222222222222222"),
+			ExpiryDate:   "11/23",
+			Amount:       150.0,
+			CurrencyCode: "EUR",
+			Status:       "payment_paid",
+			StatusCode:   10000,
+		},
+	}
+	for _, payment := range response {
+		expected, ok := expectedPayments[payment.ID]
+		if !ok {
+			t.Errorf("unexpected payment ID: %v", payment.ID)
+		}
+		if expected != payment {
+			t.Errorf("expected payment details %v, got %v", expected, payment)
+		}
 	}
 }

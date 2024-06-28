@@ -13,7 +13,8 @@ func (app *application) routes() http.Handler {
 	router := pat.New()
 
 	router.Post("/payments", http.HandlerFunc(app.proccessPayment))
-	router.Get("/payments", http.HandlerFunc(app.retrievePaymentDetails))
+	router.Get("/payments", http.HandlerFunc(app.allPayments))
+	router.Get("/payments/:id", http.HandlerFunc(app.retrievePayment))
 
 	return standardMiddleware.Then(router)
 }

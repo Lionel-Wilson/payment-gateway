@@ -45,6 +45,30 @@ var validate *validator.Validate
 var payments = make(map[string]PaymentDetails)
 var mu sync.Mutex
 
+func (app *application) allPayments(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	if len(payments) == 0 {
+		http.Error(w, "No payments available", http.StatusNotFound)
+		return
+	}
+
+	paymentsList := []PaymentDetails{}
+	for _, payment := range payments {
+		paymentsList = append(paymentsList, payment)
+	}
+
+	jsonResponse, err := json.Marshal(paymentsList)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
+}
+
 func (app *application) proccessPayment(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -111,8 +135,8 @@ func (app *application) proccessPayment(w http.ResponseWriter, r *http.Request) 
 	w.Write(jsonResponse)
 }
 
-func (app *application) retrievePaymentDetails(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+func (app *application) retrievePayment(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(r.URL.Path, "/payments/")
 	if id == "" {
 		http.Error(w, "Invalid id provided", http.StatusBadRequest)
 		return
