@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"  # Adjust port mapping as per your backend configuration
+
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./Frontend/merchant-website
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"  # Adjust port mapping as per your frontend configuration
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
