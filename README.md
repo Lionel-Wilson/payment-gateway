@@ -7,7 +7,7 @@
 - Docker installed on your machine.
 - Git installed on your machine.
 
-### Step-by-Step Instructions
+### Step-by-Step Instructions to run only the payment gateway API
 
 1. Clone the repository from https://github.com/Lionel-Wilson/payment-gateway
 2. Open a terminal and cd into the 'Backend' folder
@@ -24,6 +24,17 @@ docker run --publish 8080:8080 payment-gateway
 ```
 
 5. Test the payment gateway using Postman or your preferred API testing tool.
+
+### Step-by-Step Instructions to run the whole application including the frontend (Optional)
+
+1. Clone the repository from https://github.com/Lionel-Wilson/payment-gateway
+2. Open a terminal and run the following command. Make sure you're in the root of the repository:
+
+```
+docker-compose up --build
+```
+
+3. After it's build, visit the merchant site at http://localhost:4200
 
 ## Endpoints
 
@@ -119,7 +130,6 @@ Project is: _Complete_
 - Use a more secure way to handle sensitive information (e.g., encryption).
 - Implement better error handling and logging.
 - Use HTTPS instead of HTTP.
-- Create a frontend UI.
 - Add a check to see if currency code submitted by user is valid/exists.
 - Add user friendly errors for ProccessPaymentRequest field validation.
 - Implement authentication and authorization for the API.
