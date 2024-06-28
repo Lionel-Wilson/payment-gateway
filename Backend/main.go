@@ -37,10 +37,13 @@ func main() {
 		infoLog:  infoLog,
 	}
 
+	// Set up the CORS middleware
+	corsMiddleware := enableCORS()
+
 	srv := &http.Server{
 		Addr:         addr,
 		ErrorLog:     errorLog,
-		Handler:      app.routes(),
+		Handler:      corsMiddleware.Handler(app.routes()),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

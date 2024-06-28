@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/rs/cors"
 )
 
 func secureHeaders(next http.Handler) http.Handler {
@@ -34,5 +36,14 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 			}
 		}()
 		next.ServeHTTP(w, r)
+	})
+}
+
+func enableCORS() *cors.Cors {
+	return cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200"}, // Adjust as needed
+		AllowedMethods:   []string{"GET", "POST"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
 	})
 }
