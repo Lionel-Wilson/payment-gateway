@@ -88,10 +88,10 @@ docker-compose up --build
 
 ### 2. Retrieve Payment Details
 
-- **Endpoint**: `/payments`
+- **Endpoint**: `/payments/{id}`
 - **Method**: `GET`
 - **Description**: Retrieves the details of a previously made payment using its identifier..
-- **Query Parameters**: Retrieves the details of a previously made payment using its identifier..
+- **Path Parameters**: Retrieves the details of a previously made payment using its identifier..
   - **id (string)**: The unique identifier of the payment.
 
 #### Responses
@@ -117,6 +117,51 @@ docker-compose up --build
   ```json
   {
     "error": "Payment not found"
+  }
+  ```
+
+### 3. Retrieve All Payments
+
+- **Endpoint**: `/payments`
+- **Method**: `GET`
+- **Description**: Retrieves the details of all previously made payments.
+
+#### Responses
+
+- **Success (200 OK)**:
+
+  ```json
+  [
+    {
+      "id": "PAY-1719555378154588956",
+      "firstName": "Gee",
+      "lastName": "Wilson",
+      "cardNumber": "************1032",
+      "expiryDate": "11/27",
+      "amount": 254.5,
+      "currencyCode": "GBP",
+      "status": "payment_paid",
+      "statusCode": 10000
+    },
+    {
+      "id": "PAY-1719555406263509469",
+      "firstName": "Lionel",
+      "lastName": "Wilson",
+      "cardNumber": "************1032",
+      "expiryDate": "11/27",
+      "amount": 154.5,
+      "currencyCode": "GBP",
+      "status": "payment_paid",
+      "statusCode": 10000
+    }
+  ]
+  ```
+
+- **Not Found (404 Not Found)**:
+
+  ```json
+  {
+    "error": "No payments available"
   }
   ```
 
