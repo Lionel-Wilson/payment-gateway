@@ -1,0 +1,29 @@
+.payment-response {
+    margin-top: 1em;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #dff0d8; /* Bootstrap success alert background */
+    color: #3c763d; /* Bootstrap success alert text */
+    border: 1px solid #d6e9c6; /* Bootstrap success alert border */
+  }
+  
+
+  
+  .error {
+    background-color: #f2dede; /* Bootstrap error alert background */
+    color: red; /* Bootstrap error alert text */
+    border: 1px solid #ebccd1; /* Bootstrap error alert border */
+  }
+  
+  .payment-errors {
+    margin-top: 10px;
+    padding: 10px;
+    color: red; /* Bootstrap error alert text */
+  }
+  
+
+  
+  .payment-errors li {
+    margin-bottom: 5px;
+  }
+  

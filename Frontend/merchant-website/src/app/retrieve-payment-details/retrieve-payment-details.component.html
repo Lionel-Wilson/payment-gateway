@@ -1,0 +1,79 @@
+<div class="container mt-5">
+  <h2>Retrieve Payment Details</h2>
+  <form #paymentDetailsForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-group">
+      <label for="id">ID</label>
+      <input
+        type="text"
+        class="form-control"
+        id="form"
+        name="form"
+        placeholder="PAY-XXXXXXXXXXXXXXXXXXXX"
+        [(ngModel)]="id"
+      />
+    </div>
+
+    <button
+      mat-flat-button
+      type="submit"
+      style="border-radius: 0.5em; margin-right: 1em; background-color: #186aff"
+    >
+      Retrieve
+    </button>
+  </form>
+  <div *ngIf="paymentDetailsResponse" style="margin-top: 1em">
+    <div class="card">
+      <div class="card-body">
+        <p>
+          ID:
+          <span style="font-weight: bold">{{ paymentDetailsResponse.id }}</span>
+        </p>
+        <p>
+          First Name:
+          <span style="font-weight: bold">{{
+            paymentDetailsResponse.firstName
+          }}</span>
+        </p>
+        <p>
+          Last Name:
+          <span style="font-weight: bold">{{
+            paymentDetailsResponse.lastName
+          }}</span>
+        </p>
+        <p>
+          Card Number:
+          <span style="font-weight: bold">{{
+            paymentDetailsResponse.cardNumber
+          }}</span>
+        </p>
+        <p>
+          Expiration Date:
+          <span style="font-weight: bold">{{
+            paymentDetailsResponse.expiryDate
+          }}</span>
+        </p>
+        <p>
+          Amount:
+          <span style="font-weight: bold">{{
+            paymentDetailsResponse.lastName
+          }}</span>
+        </p>
+        <p>
+          Status:
+          <span style="font-weight: bold">{{
+            paymentDetailsResponse.status
+          }}</span>
+        </p>
+        <p>
+          Status Code:
+          <span style="font-weight: bold">{{
+            paymentDetailsResponse.statusCode
+          }}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="errorString" style="margin-top: 1em; color: red">
+    {{ errorString }}
+  </div>
+</div>

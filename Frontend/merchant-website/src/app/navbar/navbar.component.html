@@ -1,0 +1,36 @@
+<div
+  style="
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    margin-top: 1em;
+    align-items: center;
+    height: 100%;
+  "
+>
+  <img
+    src="checkout_logo.png"
+    alt="checkout logo"
+    style="width: 250px; height: auto; margin-right: 31em"
+  />
+  <a routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">
+    <button
+      mat-flat-button
+      style="border-radius: 0.5em; margin-right: 1em; background-color: #186aff"
+    >
+      Make Payment
+    </button>
+  </a>
+  <a
+    routerLink="/retrieve-payment-details"
+    routerLinkActive="active"
+    ariaCurrentWhenActive="page"
+  >
+    <button
+      mat-flat-button
+      style="border-radius: 0.5em; margin-left: 1em; background-color: #186aff"
+    >
+      Retrieve Payment Details
+    </button>
+  </a>
+</div>
