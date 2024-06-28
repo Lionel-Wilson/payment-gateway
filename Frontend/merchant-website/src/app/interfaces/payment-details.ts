@@ -1,4 +1,4 @@
-export interface PaymentDetails {
+export interface PaymentDetailsDTO {
   id: string;
   firstName: string;
   lastName: string;

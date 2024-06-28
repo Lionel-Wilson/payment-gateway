@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ViewAllPaymentsComponent } from './view-all-payments/view-all-payments.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { FormsModule } from '@angular/forms';
     NavbarComponent,
     RetrievePaymentDetailsComponent,
     HomeComponent,
+    ViewAllPaymentsComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,39 @@
+<div class="container mt-5">
+  <h2>All Payments</h2>
+  <div *ngIf="payments && payments.length > 0" style="margin-top: 1em">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Card Number</th>
+          <th scope="col">Expiry Date</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Currency Code</th>
+          <th scope="col">Status</th>
+          <th scope="col">Status Code</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of payments">
+          <th scope="row">{{ payment.id }}</th>
+          <td>{{ payment.firstName }}</td>
+
+          <td>{{ payment.lastName }}</td>
+
+          <td>{{ payment.cardNumber }}</td>
+
+          <td>{{ payment.expiryDate }}</td>
+
+          <td>{{ payment.amount }}</td>
+          <td>{{ payment.currencyCode }}</td>
+
+          <td>{{ payment.status }}</td>
+
+          <td>{{ payment.statusCode }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

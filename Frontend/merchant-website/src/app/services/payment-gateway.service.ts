@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PaymentDetails } from '../classes/payment-details';
+import { PaymentDetailsDTO } from '../interfaces/payment-details';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,9 @@ export class PaymentGatewayService {
     return this._http.post<any>(this._url, paymentDetails);
   }
   retrievePaymentDetails(id: string | null) {
-    return this._http.get<any>(this._url + '?id=' + id);
+    return this._http.get<any>(this._url + '/' + id);
+  }
+  retrievePayments() {
+    return this._http.get<PaymentDetailsDTO[]>(this._url);
   }
 }

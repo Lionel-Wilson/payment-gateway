@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { PaymentGatewayService } from '../services/payment-gateway.service';
-import { PaymentDetails } from '../interfaces/payment-details';
+import { PaymentDetailsDTO } from '../interfaces/payment-details';
 
 @Component({
   selector: 'app-retrieve-payment-details',
@@ -10,7 +10,7 @@ import { PaymentDetails } from '../interfaces/payment-details';
 export class RetrievePaymentDetailsComponent {
   constructor(private _paymentGatewayService: PaymentGatewayService) {}
 
-  paymentDetailsResponse: PaymentDetails | undefined; // Variable to hold the payment response
+  paymentDetailsResponse: PaymentDetailsDTO | undefined; // Variable to hold the payment response
   id: string | null = null; // Variable to hold the payment response
   errorString: string = '';
 
