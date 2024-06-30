@@ -1,5 +1,5 @@
 <div class="container mt-5">
-  <h2>Make a Payment</h2>
+  <h2>Request Payment</h2>
   <form #paymentForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
     <div class="form-group">
       <label for="firstName">First Name</label>
@@ -87,7 +87,7 @@
       type="submit"
       style="border-radius: 0.5em; margin-right: 1em; background-color: #186aff"
     >
-      Submit Payment
+      Submit
     </button>
   </form>
   <div *ngIf="paymentResponse" class="payment-response" style="margin-top: 1em">
