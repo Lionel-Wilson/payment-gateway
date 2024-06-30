@@ -155,9 +155,7 @@ Project is: _Complete_
 
 - Store payments in a persistent database instead of memory for production use.
 - Use a more secure way to handle sensitive information (e.g., encryption).
-- Implement better error handling and logging.
 - Use HTTPS instead of HTTP.
 - Add a check to see if currency code submitted by user is valid/exists.
-- Add user friendly errors for ProccessPaymentRequest field validation.
 - Implement authentication and authorization for the API.
-- Paginate view all payments endpoint
+- Paginate view all payments endpoint.
