@@ -16,7 +16,7 @@
 docker-compose up --build
 ```
 
-3. After it's build, visit the merchant site at http://localhost:4200 . Alternatively you can test the API using swagger at http://localhost:8080/swagger/index.html
+3. After it's built, visit the merchant site at http://localhost:4200 . Alternatively you can test the API using swagger at http://localhost:8080/swagger/index.html
 
 ## Endpoints
 
@@ -64,7 +64,18 @@ docker-compose up --build
 
   ```json
   {
-    "errors": ["CurrencyCode is required", "CVV must be exactly 3 characters"]
+    "statusCode": 422,
+    "message": "Validation failed",
+    "errors": ["FirstName is required", "CardNumber is required"]
+  }
+  ```
+
+- **Failure (500 Internal Server Error)**:
+
+  ```json
+  {
+    "statusCode": 500,
+    "message": "Something went wrong. Please try again later."
   }
   ```
 

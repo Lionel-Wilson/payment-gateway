@@ -42,6 +42,7 @@ func init() {
 // @Success      201  {object}  ProcessPaymentResponse
 // @Failure      402  {object}  ErrorResponse
 // @Failure      422  {object}  ErrorResponse
+// @Failure      500  {object}  ErrorResponse
 // @Router       /payments [post]
 func (app *Application) ProcessPayment(c *gin.Context) {
 	var paymentDetails models.ProcessPaymentRequest
@@ -60,8 +61,10 @@ func (app *Application) ProcessPayment(c *gin.Context) {
 
 	if response.Status == "payment_paid" {
 		c.JSON(http.StatusCreated, response)
-	} else {
+	} else if response.Status == "payment_declined" {
 		c.JSON(http.StatusPaymentRequired, response)
+	} else {
+		utils.NewErrorResponse(c, http.StatusInternalServerError, "Something went wrong. Please try again later.", nil)
 	}
 }
 
