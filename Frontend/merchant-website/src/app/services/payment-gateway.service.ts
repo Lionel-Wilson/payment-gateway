@@ -7,7 +7,7 @@ import { PaymentDetailsDTO } from '../interfaces/payment-details';
   providedIn: 'root',
 })
 export class PaymentGatewayService {
-  _url = 'http://localhost:8080/payments';
+  _url = 'http://localhost:8080/api/v1/payments';
 
   constructor(private _http: HttpClient) {}
 

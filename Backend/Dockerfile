@@ -8,12 +8,11 @@ COPY go.mod go.sum ./
 
 RUN go mod download
 
-COPY *.go ./
+COPY . .
 
 ENV DEV_ADDRESS=":8080"
-ENV DEV_PORT="1433"
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-gs-ping
+RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-gs-ping ./cmd/api/main.go
 
 EXPOSE 8080
 

@@ -94,12 +94,13 @@
     {{ paymentResponse }}
   </div>
   <div
-    *ngIf="paymentErrors && paymentErrors.length > 0"
+    *ngIf="error && error.errors.length > 0"
     class="payment-errors"
     style="margin-top: 1em"
   >
+    <p>{{ error.message }}</p>
     <ul>
-      <li *ngFor="let error of paymentErrors">{{ error }}</li>
+      <li *ngFor="let e of error.errors">{{ e }}</li>
     </ul>
   </div>
 </div>
