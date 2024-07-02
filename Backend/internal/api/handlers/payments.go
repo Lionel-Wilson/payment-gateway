@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"strings"
 	"sync"
@@ -12,12 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
-
-// Application represents the application with its logging configurations.
-type Application struct {
-	ErrorLog *log.Logger // Logger for error messages
-	InfoLog  *log.Logger // Logger for informational messages
-}
 
 var (
 	validate *validator.Validate              // Validator for struct validation
