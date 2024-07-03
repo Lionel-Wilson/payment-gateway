@@ -3,10 +3,10 @@ package utils
 import (
 	"fmt"
 	"math/rand"
+	"reflect"
 	"strings"
 	"time"
 
-	"github.com/Lionel-Wilson/payment-gateway/internal/api/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,14 +36,15 @@ func MaskCardNumber(cardNumber string) string {
 	return strings.Repeat("*", len(cardNumber)-4) + cardNumber[len(cardNumber)-4:]
 }
 
-// TrimWhitespace trims leading and trailing whitespace from all string fields in ProcessPaymentRequest.
-func TrimWhitespace(paymentDetails *models.ProcessPaymentRequest) {
-	paymentDetails.FirstName = strings.TrimSpace(paymentDetails.FirstName)
-	paymentDetails.LastName = strings.TrimSpace(paymentDetails.LastName)
-	paymentDetails.CardNumber = strings.TrimSpace(paymentDetails.CardNumber)
-	paymentDetails.ExpiryDate = strings.TrimSpace(paymentDetails.ExpiryDate)
-	paymentDetails.CurrencyCode = strings.TrimSpace(paymentDetails.CurrencyCode)
-	paymentDetails.CVV = strings.TrimSpace(paymentDetails.CVV)
+// TrimWhitespace trims leading and trailing whitespace from all string fields in a given struct.
+func TrimWhitespace(v interface{}) {
+	val := reflect.ValueOf(v).Elem()
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		if field.Kind() == reflect.String {
+			field.SetString(strings.TrimSpace(field.String()))
+		}
+	}
 }
 
 // NewErrorResponse creates a new error response with the provided status code, message, and errors.
